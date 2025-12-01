@@ -13,6 +13,6 @@ def CleanData():
 # Reset index
   df = df.reset_index(drop=True)
 
-  return df
+  return df  
  
 
