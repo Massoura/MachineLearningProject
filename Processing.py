@@ -1,11 +1,11 @@
 import pandas as pd
 
 def CleanData():
-  df = pd.read_csv("car_sale_data.csv")
+  df = pd.read_csv("car_sales_data.csv")
 
   df = df.drop_duplicates()
 
-  df = df.dropna(subset=["price"])
+  df = df.dropna(subset=["Price"])
 
 # Simple fill for missing data
   df = df.fillna(method="ffill")
