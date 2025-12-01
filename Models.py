@@ -9,6 +9,8 @@ from datetime import datetime
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+from
 import sklearn as metrics
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
@@ -65,10 +67,10 @@ def decisionTree(test_size = 0.3, random_state = 100):
     DT.drop("Year_of_manufacture", axis=1, inplace=True)
 
     categorical_cols = ["Manufacturer", "Model", "Fuel_Type"]
-    df_encoded = pd.get_dummies(DT, columns=categorical_cols, drop_first=True)
+    DT_encoded = pd.get_dummies(DT, columns=categorical_cols, drop_first=True)
 
-    X = df_encoded.drop("Price", axis=1)
-    y = df_encoded["Price"].values
+    X = DT_encoded.drop("Price", axis=1)
+    y = DT_encoded["Price"].values
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
     model = DecisionTreeRegressor(
@@ -88,18 +90,55 @@ def decisionTree(test_size = 0.3, random_state = 100):
     MSE = mean_squared_error(y_test, y_pred)
     RMSE = np.sqrt(MSE)
     R2 = r2_score(y_test, y_pred)
-    metrics_dict = {
-        "MAE": MAE,
-        "MSE": MSE,
-        "RMSE": RMSE,
-        "R2": R2,
-    }
-
+    metrics_dict = {"MAE": MAE,"MSE": MSE,"RMSE": RMSE,"R2": R2}
     results_DT = pd.DataFrame({"Actual": y_test, "Predicted": y_pred})
 
     print("\nDecision Tree Regression Results:")
     for k, v in metrics_dict.items():
         print(f"{k}: {v:.4f}")
-    print("\nDecision Tree Regression Training Time: {:.3f} ms:", training_time)
+    print(f"\nDecision Tree Regression Training Time: {training_time:.3f} ms")
 
-    return model, metrics_dict, results_DT
+    return model, metrics_dict, results_DT, training_time
+
+def GradientBoosting(test_size = 0.3, random_state = 100):
+    GB = CleanData().copy()
+    GB["Car_Age"] = datetime.now().year - GB["Year_of_manufacture"]
+    GB.drop("Year_of_manufacture", axis=1, inplace=True)
+
+    categorical_cols = ["Manufacturer", "Model", "Fuel_Type"]
+    GB_encoded = pd.get_dummies(GB, columns=categorical_cols, drop_first=True)
+
+    X = GB_encoded.drop("Price", axis=1)
+    y = GB_encoded["Price"].values
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=test_size, random_state=random_state
+    )
+
+    GB_model = GradientBoostingRegressor(
+        n_estimators=200,
+        learning_rate=0.05,
+        max_depth=3,
+        subsample=0.9,
+        random_state=random_state,
+    )
+
+    start = time.time()
+    GB_model.fit(X_train, y_train)
+    end = time.time()
+    training_time = (end - start) * 1000
+    y_pred = GB_model.predict(X_test)
+
+    MAE = mean_absolute_error(y_test, y_pred)
+    MSE = mean_squared_error(y_test, y_pred)
+    RMSE = np.sqrt(MSE)
+    R2 = r2_score(y_test, y_pred)
+    metrics_dict = {"MAE": MAE, "MSE": MSE, "RMSE": RMSE, "R2": R2}
+    results_GB = pd.DataFrame({"Actual": y_test, "Predicted": y_pred})
+
+    print("\nDecision Tree Regression Results:")
+    for k, v in metrics_dict.items():
+        print(f"{k}: {v:.4f}")
+    print(f"\nDecision Tree Regression Training Time: {training_time:.3f} ms")
+
+    return GB_model, metrics_dict, results_GB, training_time
