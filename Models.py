@@ -9,7 +9,7 @@ from sklearn.linear_model import LinearRegression
 import sklearn.metrics as metrics
 from sklearn.metrics import r2_score
 
-def multipleLinearRegression(df: pd.DataFrame):
+def multipleLinearRegression(df = pd.read_csv('car_sales_data.csv')):
     
     if 'Year' in df.columns:
     # Calculate age by subtracting the manufacturing year from the current year
