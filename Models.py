@@ -12,7 +12,7 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 from Processing import CleanData
 
-def multipleLinearRegression(df = pd.read_csv('car_sales_data.csv')):
+def multipleLinearRegression(df = CleanData().copy()):
     
     if 'Year' in df.columns:
     # Calculate age by subtracting the manufacturing year from the current year
@@ -47,16 +47,15 @@ def multipleLinearRegression(df = pd.read_csv('car_sales_data.csv')):
     y_test_actual = np.exp(y_test)
     y_pred_train_log = reg_model.predict(X_train)
     y_train_pred = np.exp(y_pred_train_log)
-    #print("Prediction for test set: {}".format(y_test_pred))
+    print("Prediction for test set for Linear Regression Model: {}".format(y_test_pred))
     reg_model_diff = pd.DataFrame({'Actual value': y_test_actual, 'Predicted value': y_test_pred})
     reg_model_diff
     mae = metrics.mean_absolute_error(y_test, y_test_pred)
     mse = metrics.mean_squared_error(y_test, y_test_pred)
     r2 = np.sqrt(metrics.mean_squared_error(y_test, y_test_pred))
 
-    #print('Mean Absolute Error:', mae)
-    #print('Mean Square Error:', mse)
-    #print('Root Mean Square Error:', r2)
+    LinearRegression_metrics = {
+        'MAE': mae, 'MSE': mse, 'RMSE': r2}
 
 def decisionTree(test_size = 0.3, random_state = 100):
     DT = CleanData().copy()
