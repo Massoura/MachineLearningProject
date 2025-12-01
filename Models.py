@@ -66,7 +66,6 @@ def decisionTree(test_size = 0.3, random_state = 100):
     categorical_cols = ["Manufacturer", "Model", "Fuel_Type"]
     df_encoded = pd.get_dummies(DT, columns=categorical_cols, drop_first=True)
 
-    # 5. 拆分 X / y
     X = df_encoded.drop("Price", axis=1)
     y = df_encoded["Price"].values
 
@@ -85,7 +84,6 @@ def decisionTree(test_size = 0.3, random_state = 100):
     MSE = mean_squared_error(y_test, y_pred)
     RMSE = np.sqrt(MSE)
     R2 = r2_score(y_test, y_pred)
-
     metrics_dict = {
         "MAE": MAE,
         "MSE": MSE,
@@ -93,13 +91,10 @@ def decisionTree(test_size = 0.3, random_state = 100):
         "R2": R2,
     }
 
-    results_df = pd.DataFrame({
-        "Actual": y_test,
-        "Predicted": y_pred,
-    })
+    results_DT = pd.DataFrame({"Actual": y_test, "Predicted": y_pred})
 
     print("\n=== Decision Tree Regression Results ===")
     for k, v in metrics_dict.items():
         print(f"{k}: {v:.4f}")
 
-    return model, metrics_dict, results_df
+    return model, metrics_dict, results_DT
