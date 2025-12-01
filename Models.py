@@ -2,8 +2,10 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import time
 import warnings
 warnings.filterwarnings('ignore')
+from datetime import datetime
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.tree import DecisionTreeRegressor
@@ -59,8 +61,8 @@ def multipleLinearRegression(df = CleanData().copy()):
 
 def decisionTree(test_size = 0.3, random_state = 100):
     DT = CleanData().copy()
-    DT["Car_Age"] = 2025 - DT["Year"]
-    DT.drop('Year', axis=1, inplace=True)
+    DT["Car_Age"] = datetime.now().year - DT["Year_of_manufacture"]
+    DT.drop("Year_of_manufacture", axis=1, inplace=True)
 
     categorical_cols = ["Manufacturer", "Model", "Fuel_Type"]
     df_encoded = pd.get_dummies(DT, columns=categorical_cols, drop_first=True)
@@ -76,7 +78,10 @@ def decisionTree(test_size = 0.3, random_state = 100):
         min_samples_leaf=5,
         random_state=random_state,
     )
+    start = time.time()
     model.fit(X_train, y_train)
+    end = time.time()
+    training_time = (end - start) * 1000
     y_pred = model.predict(X_test)
 
     MAE = mean_absolute_error(y_test, y_pred)
@@ -92,8 +97,9 @@ def decisionTree(test_size = 0.3, random_state = 100):
 
     results_DT = pd.DataFrame({"Actual": y_test, "Predicted": y_pred})
 
-    print("\n=== Decision Tree Regression Results ===")
+    print("\nDecision Tree Regression Results:")
     for k, v in metrics_dict.items():
         print(f"{k}: {v:.4f}")
+    print("\nDecision Tree Regression Training Time: {:.3f} ms:", training_time)
 
     return model, metrics_dict, results_DT
