@@ -32,8 +32,32 @@ ModelTrends(df_clean)
 run_all_models(df_clean)
 
 print("\n--- Enter Car Details for Prediction ---")
+
+#Stores all manufacturers and models in dataset for validation
+valid_manufacturers = df_clean["Manufacturer"].unique()
+valid_models = df_clean["Model"].unique()
+
 manufacturer = input("Manufacturer: ")
+#Checks if manufacturer exisits in dataset
+while manufacturer not in valid_manufacturers:
+    print(f"Manufacturer not in database. Try: {list(valid_manufacturers)}")
+    manufacturer = input("Manufacturer: ").strip()
+
 model_name = input("Model: ")
+#Checks if model exists in dataset
+while model_name not in valid_models:
+    print(f"Model not in database. Try: {list(valid_models)}")
+    model_name = input("Model: ").strip()
+#Checks if combination of manufacturer and model exists in dataset
+    while df_clean[
+    (df_clean["Manufacturer"] == manufacturer) &
+    (df_clean["Model"] == model_name)
+    ].empty:
+        print(f" '{manufacturer}' does not manufacture'{model_name}' .")
+        print("Models for this manufacturer:")
+        print(df_clean[df_clean["Manufacturer"] == manufacturer]["Model"].unique())
+        model_name = input("Model: ").strip()
+        
 year = int(input("Year of manufacture: "))
 mileage = int(input("Mileage: "))
 fuel_type = input("Fuel type (e.g., Petrol, Diesel): ")
